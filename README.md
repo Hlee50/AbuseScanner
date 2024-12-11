@@ -6,7 +6,7 @@ The client calls the URLhaus, ThreatFox, and/or Malware Bazaar APIs to look up i
 # Run the client
 To run the client run the _abusescanner.py_ script.
 
-## Reference API documentation
+### Reference API documentation
 https://urlhaus-api.abuse.ch/
 
 https://bazaar.abuse.ch/api/
