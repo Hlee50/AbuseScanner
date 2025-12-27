@@ -3,6 +3,8 @@ AbuseScanner is a simple API client, written in Python, that scans malicious URL
 
 The client calls the URLhaus, ThreatFox, and/or Malware Bazaar APIs to look up inputted URLs or file hashes in their respective databases. Published URLs, IOCs, or file hashes are known to be malicious.
 
+An Auth-Key from your abuse.ch account (https://auth.abuse.ch/) is required for the client to make requests to any Abuse.ch APIs.
+
 # Run the client
 To run the client run the _abusescanner.py_ script.
 
