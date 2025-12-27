@@ -1,9 +1,10 @@
 import requests;
 
 # Method to query URLhaus API for URL information using URL parameter
-def scan_url(url):
+def scan_url(auth, url):
+    headers = {"Auth-Key": auth}
     data = {'url' : url}
-    response = requests.post("https://urlhaus-api.abuse.ch/v1/url/", data).json()
+    response = requests.post("https://urlhaus-api.abuse.ch/v1/url/", headers=headers, data=data).json()
     status = response["query_status"]
     print("\nURLhaus:")
     match status:
@@ -20,9 +21,10 @@ def scan_url(url):
             print("Last Online:", response["last_online"])
 
 # Method to query URLhaus API for payload (malware sample) information using file hash parameter
-def scan_payload(hash, type):
+def scan_payload(auth, hash, type):
+    headers = {"Auth-Key": auth}
     data = {type : hash}
-    response = requests.post("https://urlhaus-api.abuse.ch/v1/payload/", data).json()
+    response = requests.post("https://urlhaus-api.abuse.ch/v1/payload/", headers=headers, data=data).json()
     status = response["query_status"]
     print("\nURLhaus:")
     match status:
@@ -40,9 +42,10 @@ def scan_payload(hash, type):
             print("Last Seen: " + str(response["lastseen"]))
 
 # Method to query ThreatFox API for IOC information using URL parameter
-def scan_ioc(ioc):
+def scan_ioc(auth, ioc):
+    headers = {"Auth-Key": auth}
     data = {"query" : "search_ioc", "search_term" : ioc}
-    response = requests.post("https://threatfox-api.abuse.ch/api/v1/", json = data).json()
+    response = requests.post("https://threatfox-api.abuse.ch/api/v1/", headers=headers, json=data).json()
     status = response["query_status"]
     print("\nThreatFox:")
     match status:
@@ -63,9 +66,10 @@ def scan_ioc(ioc):
             print("Last Seen:", info["last_seen"])
 
 # Method to query MalwareBazaar API for malware sample information using file hash parameter
-def scan_malware(hash):
+def scan_malware(auth, hash):
+    headers = {"Auth-Key": auth}
     data = {"query" : "get_info", "hash" : hash}
-    response = requests.post("https://mb-api.abuse.ch/api/v1/", data).json()
+    response = requests.post("https://mb-api.abuse.ch/api/v1/", headers=headers, data=data).json()
     status = response["query_status"]
     print("\nMalware Bazaar:")
     match status:
@@ -86,7 +90,11 @@ def scan_malware(hash):
 
 # Script
 if __name__ == "__main__":
-    print("Select an option to scan for reported malicious URLs or filehashes by querying from Abuse.ch databases (URLhaus, ThreatFox, and MalwareBazaar)")
+    # Auth Key input
+    print("Enter your Abush.ch Auth Key:")
+    print("> ", end='')
+    auth = input()
+    print("\nSelect an option to scan for reported malicious URLs or filehashes by querying from Abuse.ch databases (URLhaus, ThreatFox, and MalwareBazaar)")
     # Main loop to prompt user for URL or file hash input(s) after selecting the appropriate option from the list of options
     while True:
         print("\n1: Scan URL\n" + "2: Scan Filehash\n" + "/e: Exit\n")
@@ -97,8 +105,8 @@ if __name__ == "__main__":
                 print("\nEnter the URL")
                 print("> ", end='')
                 url = input()
-                scan_url(url)
-                scan_ioc(url)
+                scan_url(auth, url)
+                scan_ioc(auth, url)
             case "2": # File hash input
                 print("\nSelect the type of filehash\n1: Scan MD5\n2: Scan SHA256\n")
                 print("> ", end='')
@@ -108,14 +116,14 @@ if __name__ == "__main__":
                         print("\nEnter the MD5 filehash")
                         print("> ", end='')
                         hash = input()
-                        scan_payload(hash, "md5_hash")
-                        scan_malware(hash)
+                        scan_payload(auth, hash, "md5_hash")
+                        scan_malware(auth, hash)
                     case "2":
                         print("\nEnter the SHA256 filehash")
                         print("> ", end='')
                         hash = input()
-                        scan_payload(hash, "sha256_hash")
-                        scan_malware(hash)
+                        scan_payload(auth, hash, "sha256_hash")
+                        scan_malware(auth, hash)
                     case _:
                         print("Hash type not avaiable please select one of the available hash types")
             case "/e": # Breaks the infinite loop and exits the script
